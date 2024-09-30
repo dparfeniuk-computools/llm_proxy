@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  app:
+    build: .
+    container_name: llm_proxy_backend
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app/
+  
+  database:
+    image: postgres:16
+    container_name: llm_proxy_database
+    env_file: 
+      - .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    container_name: llm_proxy_adminer
+    ports:
+      - 8080:8080
+  
+volumes:
+  pg-data: {}
