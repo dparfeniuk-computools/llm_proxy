@@ -24,7 +24,7 @@ WORKDIR /app/
 # Copy project
 COPY ./ ./
 
-RUN pip install -r requirements.txt
+RUN pip install -r requirements/main.txt
 
 EXPOSE $UVICORN_PORT
 

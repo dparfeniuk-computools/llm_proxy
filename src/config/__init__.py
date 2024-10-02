@@ -1,11 +1,50 @@
+import os
 from pathlib import Path
 
+from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from . import core
-from . import cors as _cors
-from . import database as _database
-from . import public_api as _public_api
+ROOT_PATH = Path(__file__).parent.parent.parent
+
+
+class APIUrlsSettings(BaseModel):
+    """API public urls settings."""
+
+    docs: str = "/docs"
+    redoc: str = "/redoc"
+
+
+class PublicApiSettings(BaseModel):
+    """Configure public API service settings."""
+
+    domain: str = "http://backend.com"
+    name: str = "LLM Proxy"
+    version: str = "0.1.0"
+    urls: APIUrlsSettings = APIUrlsSettings()
+
+
+class DatabaseSettings(BaseModel):
+    driver: str = "postgresql+asyncpg"
+    host: str = os.getenv("LLM_PROXY__DATABASE__HOST", "database")
+    port: str = os.getenv("LLM_PROXY__DATABASE__PORT", "5432")
+    user: str = os.getenv("LLM_PROXY__DATABASE__USER", "postgres")
+    password: str = os.getenv("LLM_PROXY__DATABASE__PASSWORD", "postgres")
+    name: str = os.getenv("LLM_PROXY__DATABASE__NAME", "postgres")
+
+    @property
+    def url(self) -> str:
+        # NOTE: SQLite is used as a database for testing purposes only.
+        #       When pytest is in the runtime it automatically overrides
+        #       the database driver
+        if "sqlite" in self.driver:
+            return f"{self.driver}:///{ROOT_PATH}/{self.name}.db"
+
+        return (
+            f"{self.driver}://"
+            f"{self.user}:{self.password}@"
+            f"{self.host}:{self.port}/"
+            f"{self.name}"
+        )
 
 
 class Settings(BaseSettings):
@@ -20,12 +59,11 @@ class Settings(BaseSettings):
     src_dir: Path
 
     debug: bool = True
-    public_api: _public_api.Settings = _public_api.Settings()
-    cors: _cors.CorsSettings = _cors.CorsSettings()
-    database: _database.DatabaseSettings = _database.DatabaseSettings()
+    public_api: PublicApiSettings = PublicApiSettings()
+    database: DatabaseSettings = DatabaseSettings()
 
 
 settings = Settings(
-    root_dir=core.ROOT_PATH,
-    src_dir=core.ROOT_PATH / "src",
+    root_dir=ROOT_PATH,
+    src_dir=ROOT_PATH / "src",
 )

@@ -1,5 +1,3 @@
-version: "3"
-
 services:
   app:
     build: .
@@ -21,11 +19,5 @@ services:
     volumes:
       - pg-data:/var/lib/postgresql/data
 
-  adminer:
-    image: adminer
-    container_name: llm_proxy_adminer
-    ports:
-      - 8080:8080
-  
 volumes:
   pg-data: {}
