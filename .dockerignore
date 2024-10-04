@@ -1,0 +1,9 @@
+Dockerfile
+docker-compose.yaml
+.gitignore
+*.yaml
+*.yml
+__pycache__
+.mypy_cache
+venv/
+.pytest_cache
