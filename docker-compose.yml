@@ -1,8 +1,6 @@
 services:
   app:
-    build:
-      context: .
-      dockerfile: docker/backend.dockerfile
+    build: .
     container_name: llm_proxy_backend
     env_file:
       - .env
@@ -26,8 +24,10 @@ services:
   llama:
     build:
       context: .
-      dockerfile: docker/llama.dockerfile
+      dockerfile: Dockerfile.llama
     container_name: llama_server
+    env_file: 
+      - .env
     ports:
       - "8080:8080"
 
