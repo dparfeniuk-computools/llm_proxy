@@ -57,6 +57,7 @@ class Settings(BaseSettings):
     # Application settings
     root_dir: Path
     src_dir: Path
+    llama_endpoint: str = os.getenv("LLM_PROXY__LLAMA__ENDPOINT", "invalid")
 
     debug: bool = True
     public_api: PublicApiSettings = PublicApiSettings()
